@@ -88,3 +88,6 @@ sw.*
 
 # Vim swap files
 *.swp
+
+# database
+api/db/database.db
