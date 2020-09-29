@@ -42,7 +42,6 @@ INSTALLED_APPS = [
     'django_filters',
     'django_seed',
     'main.apps.MainConfig',
-    'user_unique_email'
 ]
 
 MIDDLEWARE = [
@@ -84,19 +83,19 @@ WSGI_APPLICATION = 'api.wsgi.application'
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'checkMyCar',
-#         'USER': 'sit223',
-#         'PASSWORD': 'checkMyC@rSIT223',
+#         'NAME': '<database name here>',
+#         'USER': '<username here>',
+#         'PASSWORD': '<password here>',
 #         'HOST': 'localhost',
 #         'PORT': '3306'
 #     }
 # }
 
-# SQLite Database setup 
+# SQLite Database setup
 # WARNING: PURELY FOR DEVELOPMENT SETUP ONLY
 DATABASES = {
     'default': {
-        'ENGINE' : 'django.db.backends.sqlite3',
+        'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3')
     }
 }
@@ -120,7 +119,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-AUTH_USER_MODEL = 'user_unique_email.User'
+AUTH_USER_MODEL = 'main.User'
 
 LOGIN_URL = '/api/signin'
 
@@ -140,7 +139,7 @@ CORS_ORIGIN_WHITELIST = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Manila'
 
 USE_I18N = True
 
@@ -166,12 +165,6 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 10
 }
 
-# email related stuff
+MEDIA_URL = 'api/media/'
 
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = "smtp.gmail.com"
-EMAIL_HOST_USER = "checkyourcar.sit223@gmail.com"
-EMAIL_HOST_PASSWORD = "checkMyC@rSIT223"
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_USE_SSL = False
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

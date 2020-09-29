@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.http import Http404
 from .models import *
-from .serializers import * 
+from .serializers import *
 from .permissions import *
 from rest_framework import mixins
 from rest_framework import status
@@ -17,26 +17,36 @@ import json
 
 User = get_user_model()
 
+
+class UserList(generics.ListAPIView):
+    permission_classes = [IsAdminUser]
+    queryset = User.objects.all()
+    serializer_class = AuthUserSerializer
+
+
 class AuthUserDetail(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, format=None):
-        user = UserSerializer(request.user)
+        user = AuthUserSerializer(request.user)
         content = {
             "user": user.data,
         }
 
         return Response(content)
 
+
 class AuthUserRegister(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserCreateSerializer
     permission_classes = [AllowAny]
 
+
 class AuthUserUpdate(generics.UpdateAPIView):
     queryset = User.objects.all()
     serializer_class = UserUpdateSerializer
     permission_classes = [IsAuthenticated, IsProfileOwnerOrReadOnly]
+
 
 class AuthUserUpdatePassword(generics.UpdateAPIView):
     model = User
@@ -46,7 +56,7 @@ class AuthUserUpdatePassword(generics.UpdateAPIView):
     def get_object(self, queryset=None):
         obj = self.request.user
         return obj
-    
+
     def update(self, request, *args, **kwargs):
         self.object = self.get_object()
         serializer = self.get_serializer(data=request.data)

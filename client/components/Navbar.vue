@@ -81,3 +81,10 @@ export default {
     }
 };
 </script>
+
+<style lang="scss" scoped>
+.navbar-profile-picture{
+    height: 30px;
+    width: 30px;
+}
+</style>

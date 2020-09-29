@@ -150,3 +150,6 @@ scripts/create_car_db_seed.py
 scripts/make_seed.json
 scripts/issues_init.json
 scripts/issue_seed.json
+api/main/media/users/Screenshot_from_2020-09-12_18-44-14_N8SLrot.png
+api/main/media/users/Screenshot_from_2020-09-12_18-44-14.png
+api/main/media/users/user.png
