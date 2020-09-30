@@ -154,3 +154,6 @@ scripts/issue_seed.json
 api/main/media/users/Screenshot_from_2020-09-12_18-44-14_N8SLrot.png
 api/main/media/users/Screenshot_from_2020-09-12_18-44-14.png
 api/main/media/users/user.png
+**/media/users/*
+**/media/shops/*
+**/media/menu-items/*

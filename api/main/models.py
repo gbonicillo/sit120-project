@@ -24,7 +24,8 @@ class User(AbstractUser):
     profile_picture = models.ImageField(
         upload_to="users",
         default="/defaults/user.png",
-        storage=fs_storage
+        storage=fs_storage,
+        blank=True
     )
     type = models.CharField(
         max_length=2,
@@ -32,7 +33,7 @@ class User(AbstractUser):
         default=CUSTOMER
     )
 
-    def __str_(self):
+    def __str__(self):
         return f"{self.first_name} {self.last_name}"
 
 # Shop Model
@@ -49,7 +50,8 @@ class Shop(models.Model):
     profile_picture = models.ImageField(
         upload_to="shops/",
         default="/defaults/user.png",
-        storage=fs_storage
+        storage=fs_storage,
+        blank=True
     )
 
     def __str__(self):
@@ -88,10 +90,12 @@ class MenuItem(models.Model):
         decimal_places=2,
         null=False
     )
+    description = models.TextField(default="No description given...")
     picture = models.ImageField(
         upload_to="menu-items/",
         default="/defaults/generic.png",
-        storage=fs_storage
+        storage=fs_storage,
+        blank=True
     )
 
     shop = models.ForeignKey(
@@ -100,10 +104,23 @@ class MenuItem(models.Model):
         on_delete=models.CASCADE
     )
 
+    def __str__(self):
+        return self.name
+
 # Order Model
 
 
 class Order(models.Model):
+    PENDING = "PD"
+    ACCEPTED = "AC"
+    CANCELED = "CN"
+
+    ORDER_STATUS_CHOICES = [
+        (PENDING, "pending"),
+        (ACCEPTED, "accepted"),
+        (CANCELED, "canceled")
+    ]
+
     user = models.ForeignKey(
         get_user_model(),  # In case we change our User model to something else
         related_name="orders",
@@ -116,13 +133,21 @@ class Order(models.Model):
     )
     remark = models.TextField(default="No remarks")
     created_at = models.DateTimeField(auto_now_add=True)
+    status = models.CharField(
+        max_length=2,
+        choices=ORDER_STATUS_CHOICES,
+        default=PENDING
+    )
 
-    menu_items = models.ManyToManyField(MenuItem, through="OrderMenuItems")
+    menu_items = models.ManyToManyField(MenuItem, through="OrderMenuItem")
+
+    def __str__(self):
+        return f"order_{self.id}_{self.created_at}"
 
 # Intermediate Model for Order and MenuItems
 
 
-class OrderMenuItems(models.Model):
+class OrderMenuItem(models.Model):
     menu_item = models.ForeignKey(MenuItem, on_delete=models.CASCADE)
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     quantity = models.IntegerField()

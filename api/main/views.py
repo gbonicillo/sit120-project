@@ -19,12 +19,80 @@ User = get_user_model()
 
 
 class UserList(generics.ListAPIView):
-    permission_classes = [IsAdminUser]
     queryset = User.objects.all()
     serializer_class = AuthUserSerializer
 
 
-class AuthUserDetail(APIView):
+class ShopList(generics.ListAPIView):
+    queryset = Shop.objects.all()
+    serializer_class = ShopListSerializer
+
+
+class ShopDetails(generics.RetrieveAPIView):
+    queryset = Shop.objects.all()
+    serializer_class = ShopDetailsSerializer
+
+
+class ShopDestroy(generics.DestroyAPIView):
+    permission_classes = [IsAuthenticated, IsOwner, IsShopOwnerOrReadOnly]
+    queryset = Shop.objects.all()
+    serializer_class = ShopDetailsSerializer
+
+
+class ShopCreate(generics.CreateAPIView):
+    permission_classes = [IsAuthenticated, IsOwner]
+    queryset = Shop.objects.all()
+    serializer_class = ShopCreateUpdateSerializer
+
+
+class ShopUpdate(generics.UpdateAPIView):
+    permission_classes = [IsAuthenticated, IsOwner, IsShopOwnerOrReadOnly]
+    queryset = Shop.objects.all()
+    serializer_class = ShopCreateUpdateSerializer
+
+
+class MenuItemCreate(generics.CreateAPIView):
+    permission_classes = [IsAuthenticated, IsOwner, IsShopOwnerOrReadOnly]
+    queryset = MenuItem.objects.all()
+    serializer_class = MenuItemCreateSerializer
+
+
+class MenuItemDestroy(generics.DestroyAPIView):
+    permission_classes = [IsAuthenticated, IsOwner, IsShopOwnerOrReadOnly]
+    queryset = MenuItem.objects.all()
+    serializer_class = MenuItemCreateSerializer
+
+
+class MenuItemUpdate(generics.UpdateAPIView):
+    permission_classes = [IsAuthenticated, IsOwner, IsShopOwnerOrReadOnly]
+    queryset = MenuItem.objects.all()
+    serializer_class = MenuItemUpdateSerializer
+
+
+class OrderDetails(generics.RetrieveAPIView):
+    permission_classes = [IsAuthenticated]
+    queryset = Order.objects.all()
+    serializer_class = OrderDetailsSerializer
+
+
+class OrderCreate(generics.CreateAPIView):
+    permission_classes = [IsAuthenticated]
+    queryset = Order.objects.all()
+    serializer_class = OrderCreateSerializer
+
+
+class OrderUpdateStatus(generics.UpdateAPIView):
+    permission_classes = [IsAuthenticated]
+    queryset = Order.objects.all()
+    serializer_class = OrderUpdateStatusSerializer
+
+
+class UserProfile(generics.RetrieveAPIView):
+    queryset = User.objects.all()
+    serializer_class = AuthUserSerializer
+
+
+class AuthUserDetails(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, format=None):
