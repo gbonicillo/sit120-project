@@ -82,6 +82,7 @@ class ShopAddressCreateUpdateSerializer(serializers.ModelSerializer):
             "barangay",
             "city",
             "province",
+            "region",
             "zip_code"
         ]
 
@@ -97,6 +98,7 @@ class ShopCreateUpdateSerializer (serializers.ModelSerializer):
             "name",
             "owner",
             "profile_picture",
+            "contact_number",
             "address"
         ]
 
@@ -112,6 +114,8 @@ class ShopCreateUpdateSerializer (serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         instance.name = validated_data.get("name", instance.name)
+        instance.contact_number = validated_data.get(
+            "contact_number", instance.contact_number)
         instance.profile_picture = validated_data.get(
             "profile_picture", instance.profile_picture)
         updated_address = validated_data.get("address", instance.address)
@@ -125,8 +129,11 @@ class ShopCreateUpdateSerializer (serializers.ModelSerializer):
             "city", instance.address.city)
         instance.address.province = updated_address.get(
             "province", instance.address.province)
+        instance.address.region = updated_address.get(
+            "region", instance.address.region)
         instance.address.zip_code = updated_address.get(
             "zip_code", instance.address.zip_code)
+        instance.save()
 
         return instance
 
@@ -181,6 +188,7 @@ class MenuItemUpdateSerializer(serializers.ModelSerializer):
         instance.description = validated_data.get(
             "description", instance.description)
         instance.picture = validated_data.get("picture", instance.picture)
+        instance.save()
 
         return instance
 
@@ -272,6 +280,7 @@ class OrderUpdateStatusSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         instance.status = validated_data.get("status", instance.status)
+        instance.save()
 
         return instance
 
@@ -279,8 +288,6 @@ class OrderUpdateStatusSerializer(serializers.ModelSerializer):
 
 
 class AuthUserSerializer (serializers.ModelSerializer):
-    profile_picture = serializers.ImageField()
-
     class Meta:
         model = User
         fields = [
@@ -290,8 +297,24 @@ class AuthUserSerializer (serializers.ModelSerializer):
             "first_name",
             "last_name",
             "is_staff",
-            "profile_picture",
             "type",
+        ]
+
+
+class UserProfileSerializer (serializers.ModelSerializer):
+    profile_picture = serializers.ImageField()
+    address = serializers.StringRelatedField()
+
+    class Meta:
+        model = User
+        fields = [
+            "id",
+            "username",
+            "email",
+            "contact_number",
+            "first_name",
+            "last_name",
+            "profile_picture",
             "address"
         ]
 
@@ -305,6 +328,7 @@ class UserAddressCreateUpdateSerializer(serializers.ModelSerializer):
             "barangay",
             "city",
             "province",
+            "region",
             "zip_code"
         ]
 
@@ -323,6 +347,7 @@ class UserCreateSerializer (serializers.ModelSerializer):
             "username",
             "password",
             "email",
+            "contact_number",
             "first_name",
             "last_name",
             "profile_picture",
@@ -354,6 +379,7 @@ class UserUpdateSerializer (serializers.ModelSerializer):
         fields = [
             "id",
             "email",
+            "contact_number",
             "first_name",
             "last_name",
             "profile_picture",
@@ -362,6 +388,8 @@ class UserUpdateSerializer (serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         instance.email = validated_data.get("email", instance.email)
+        instance.contact_number = validated_data.get(
+            "contact_number", instance.contact_number)
         instance.first_name = validated_data.get(
             "first_name", instance.first_name)
         instance.last_name = validated_data.get(
@@ -379,8 +407,11 @@ class UserUpdateSerializer (serializers.ModelSerializer):
             "city", instance.address.city)
         instance.address.province = updated_address.get(
             "province", instance.address.province)
+        instance.address.region = updated_address.get(
+            "region", instance.address.region)
         instance.address.zip_code = updated_address.get(
             "zip_code", instance.address.zip_code)
+        instance.save()
 
         return instance
 
@@ -397,4 +428,30 @@ class UserPasswordSerializer (serializers.Serializer):
         fields = [
             "old_password",
             "new_password"
+        ]
+
+
+class UserProfilePictureSerializer (serializers.ModelSerializer):
+    profile_picture = serializers.ImageField()
+
+    class Meta:
+        model = User
+        fields = [
+            "profile_picture"
+        ]
+
+    def update(self, instance, validated_data):
+        instance.profile_picture = validated_data.get(
+            "profile_picture", instance.profile_picture)
+        instance.save()
+
+        return instance
+
+
+class UserMyShopSerializer (serializers.ModelSerializer):
+
+    class Meta:
+        model = Shop
+        fields = [
+            "id"
         ]

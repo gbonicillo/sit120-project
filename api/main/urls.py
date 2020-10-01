@@ -7,12 +7,17 @@ urlpatterns = []
 
 auth_url_patterns = [
     path("auth/user", views.AuthUserDetails.as_view()),
-    path("auth/users", views.UserList.as_view()),
-    path("auth/users/<int:pk>", views.UserProfile.as_view()),
-    path("auth/users/<int:pk>/update", views.AuthUserUpdate.as_view()),
-    path("auth/users/<int:pk>/change-password",
-         views.AuthUserUpdatePassword.as_view()),
     path("auth/register", views.AuthUserRegister.as_view()),
+]
+
+user_url_patterns = [
+    path("users/", views.UserList.as_view()),
+    path("users/<int:pk>", views.UserProfile.as_view()),
+    path("users/<int:pk>/update", views.AuthUserUpdate.as_view()),
+    path("users/<int:pk>/change-password",
+         views.AuthUserUpdatePassword.as_view()),
+    path("users/<int:pk>/profile-picture", views.UserProfilePicture.as_view()),
+    path("user/my-shop", views.UserMyShop.as_view())
 ]
 
 shop_url_patterns = [
@@ -36,6 +41,7 @@ order_item_url_patterns = [
 ]
 
 urlpatterns += auth_url_patterns
+urlpatterns += user_url_patterns
 urlpatterns += shop_url_patterns
 urlpatterns += menu_item_url_patterns
 urlpatterns += order_item_url_patterns

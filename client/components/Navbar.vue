@@ -1,5 +1,5 @@
 <template>
-    <b-navbar toggleable="md" type="dark" variant="dark">
+    <b-navbar id="main-nav" toggleable="md" type="dark" variant="primary">
         <b-navbar-toggle target="nav_collapse" />
         <b-navbar-brand to="/">
             Online Karenderya
@@ -30,6 +30,14 @@
                         </b-link>
                     </b-dropdown-item>
                 </b-nav-item-dropdown>
+                <b-nav-item
+                    v-for="(item, key) of rightGuestItems"
+                    v-else
+                    :key="key"
+                    :to="item.to"
+                >
+                    {{ item.title }}
+                </b-nav-item>
             </b-navbar-nav>
         </b-collapse>
     </b-navbar>
@@ -41,6 +49,8 @@ export default {
         return {
             searchTerm: "",
             globalItems: [
+            ],
+            authenticatedItems: [
                 {
                     title: "Home",
                     to: {
@@ -48,7 +58,14 @@ export default {
                     }
                 }
             ],
-            authenticatedItems: [],
+            rightGuestItems: [
+                {
+                    title: "Login",
+                    to: {
+                        name: "login"
+                    }
+                }
+            ],
             rightNavAuthenticatedItems: [
                 {
                     title: "Profile",

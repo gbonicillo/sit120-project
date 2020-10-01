@@ -64,4 +64,9 @@ body {
     border-color: var(--dark);
 }
 
+.input-group-text {
+    background-color: var(--alt-secondary);
+    // color: var(--dark);
+    border-color: var(--dark);
+}
 </style>

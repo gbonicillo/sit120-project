@@ -11,6 +11,19 @@
             :required="required ? true : false"
             :placeholder="placeholder"
         />
+        <b-input-group
+            v-if="formType === 'tel'"
+            prepend="+63"
+        >
+            <b-form-input
+                :id="id"
+                v-model="dataModel"
+                type="tel"
+                :required="required ? true : false"
+                :placeholder="placeholder"
+                pattern="9[0-9]{9}"
+            />
+        </b-input-group>
         <b-form-select
             v-if="formType === 'select'"
             :id="id"
@@ -80,6 +93,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import '@/assets/theme-colors.scss';
 
 .input-area {
     height: 150px

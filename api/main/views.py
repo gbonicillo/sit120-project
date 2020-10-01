@@ -89,7 +89,23 @@ class OrderUpdateStatus(generics.UpdateAPIView):
 
 class UserProfile(generics.RetrieveAPIView):
     queryset = User.objects.all()
-    serializer_class = AuthUserSerializer
+    serializer_class = UserProfileSerializer
+
+
+class UserProfilePicture(generics.RetrieveUpdateAPIView):
+    permission_classes = [IsAuthenticated, IsProfileOwnerOrReadOnly]
+    queryset = User.objects.all()
+    serializer_class = UserProfilePictureSerializer
+
+
+class UserMyShop(APIView):
+    permission_classes = [IsAuthenticated, IsOwner]
+
+    def get(self, request, format=None):
+        shop = Shop.objects.get(owner=request.user)
+        serializer = UserMyShopSerializer(shop)
+
+        return Response(serializer.data)
 
 
 class AuthUserDetails(APIView):

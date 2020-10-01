@@ -1,7 +1,9 @@
 <template>
     <div>
         <b-card id="general-contents-container">
-            <b-card-title>
+            <b-card-title
+                v-if="pageTitle.length > 0"
+            >
                 <b-row
                     align-v="center"
                 >
@@ -43,7 +45,7 @@ export default {
 
 <style lang="scss" scoped>
 #general-contents-container{
-    padding: 20px;
+    padding: 10px;
     height: auto;
     min-height: 100vh;
 }

@@ -14,10 +14,13 @@ $white: #f9f5d7;
 $gray: #928374;
 
 $primary: #076678;
+//$primary: #9d0006;
 $secondary: #928374;
-$success:  #689d6a;
-$danger: #cc241d;
+$success: #689d6a;
+$danger: $red;
 $warning: #d79921;
-$info: #458588; 
+$info: #458588;
 $light: #f9f5d7;
 $dark: #282828;
+
+$alt-seconday: #d5c5a1; //For stuff like form input prepends

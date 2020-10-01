@@ -21,6 +21,7 @@ class User(AbstractUser):
     ]
 
     email = models.EmailField(unique=True, null=False)
+    contact_number = models.CharField(max_length=10)
     profile_picture = models.ImageField(
         upload_to="users",
         default="/defaults/user.png",
@@ -47,6 +48,7 @@ class Shop(models.Model):
         related_name="shop",
         on_delete=models.CASCADE
     )
+    contact_number = models.CharField(max_length=10)
     profile_picture = models.ImageField(
         upload_to="shops/",
         default="/defaults/user.png",
