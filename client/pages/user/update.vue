@@ -5,46 +5,10 @@
             @input="onInput"
         >
             <h4>User Information</h4>
-            <form-group
-                id="username"
-                v-model="form.username"
-                label="Username"
-                placeholder="Enter Username"
-                :required="true"
-            />
-            <b-row>
-                <b-col lg="6" md="12">
-                    <form-group
-                        id="password"
-                        v-model="form.password"
-                        label="Password"
-                        placeholder="Enter password"
-                        type="password"
-                        :required="true"
-                    />
-                </b-col>
-                <b-col lg="6" md="12">
-                    <form-group
-                        id="confirm-password"
-                        label="Confirm Password"
-                        placeholder="Confirm Password"
-                        type="password"
-                        :required="true"
-                    />
-                </b-col>
-            </b-row>
-            <form-group
-                id="type"
-                v-model="form.type"
-                label="Type"
-                :required="true"
-                form-type="select"
-                :options="typeOptions"
-            />
             <b-row>
                 <form-group
                     id="first-name"
-                    v-model="form.firstName"
+                    v-model="form.first_name"
                     label="First Name"
                     placeholder="Enter first name"
                     :required="true"
@@ -52,7 +16,7 @@
                 />
                 <form-group
                     id="last-name"
-                    v-model="form.lastName"
+                    v-model="form.last_name"
                     label="Last Name"
                     placeholder="Enter last name"
                     :required="true"
@@ -70,7 +34,7 @@
             />
             <form-group
                 id="contactNumber"
-                v-model="form.contactNumber"
+                v-model="form.contact_number"
                 form-type="tel"
                 label="Contact Number"
                 placeholder="Enter contact number (should be exactly 10 numbers long)"
@@ -79,14 +43,14 @@
             <h4>Address</h4>
             <form-group
                 id="line-1"
-                v-model="form.address.line1"
+                v-model="form.address.line_1"
                 label="Line 1"
                 placeholder="Enter address line 1 (Street address)"
                 :required="true"
             />
             <form-group
                 id="line-2"
-                v-model="form.address.line2"
+                v-model="form.address.line_2"
                 label="Line 2"
                 placeholder="Enter address line 2 (Apartment number, etc | Optional)"
             />
@@ -120,7 +84,7 @@
             />
             <form-group
                 id="zip-code"
-                v-model="form.address.zipCode"
+                v-model="form.address.zip_code"
                 label="Zip Code"
                 placeholder="Enter zip code"
                 type="number"
@@ -128,7 +92,7 @@
                 maxlength="4"
             />
             <b-button block type="submit" variant="primary">
-                Register
+                Update
             </b-button>
         </b-form>
     </general-contents-container>
@@ -143,38 +107,19 @@ export default {
         GeneralContentsContainer,
         FormGroup
     },
-    auth: "guest",
+    middleware: "auth",
+    async asyncData ({ $axios, params, error, store }) {
+        try {
+            const user = await $axios.$get(`/api/users/${store.$auth.user.id}/update`);
+            return {
+                form: user
+            };
+        } catch (err) {
+            error({ statusCode: 500, message: "Something went wrong..." });
+        }
+    },
     data () {
         return {
-            form: {
-                username: "",
-                password: "",
-                firstName: "",
-                lastName: "",
-                email: "",
-                contactNumber: "",
-                profilePicture: null,
-                type: "CS",
-                address: {
-                    line1: "",
-                    line2: "",
-                    barangay: "",
-                    city: "",
-                    province: "",
-                    region: "",
-                    zipCode: ""
-                }
-            },
-            typeOptions: [
-                {
-                    value: "CS",
-                    text: "Customer"
-                },
-                {
-                    value: "OW",
-                    text: "Owner"
-                }
-            ],
             error: null,
             validationErrors: null,
             otherError: ""
@@ -194,38 +139,25 @@ export default {
     },
     methods: {
         async onSubmit (evt) {
-            // For some reason Nuxt attaches an Auth header for this
-            // Django rest framework jwt doesn't like it
-            this.$axios.setHeader("Authorization", "");
-            await this.$axios.post("/api/auth/register", {
-                username: this.form.username,
-                password: this.form.password,
+            await this.$axios.put(`/api/users/${this.$auth.user.id}/update`, {
                 email: this.form.email,
-                contact_number: this.form.contactNumber,
-                first_name: this.form.firstName,
-                last_name: this.form.lastName,
-                type: this.form.type,
+                contact_number: this.form.contact_number,
+                first_name: this.form.first_name,
+                last_name: this.form.last_name,
                 address: {
-                    line_1: this.form.address.line1,
-                    line_2: this.form.address.line2,
+                    line_1: this.form.address.line_1,
+                    line_2: this.form.address.line_2,
                     barangay: this.form.address.barangay,
                     city: this.form.address.city,
                     province: this.form.address.province,
                     region: this.form.address.region,
-                    zip_code: this.form.address.zipCode
+                    zip_code: this.form.address.zip_code
                 }
             })
                 .then((response) => {
-                    this.$auth.loginWith("local", {
-                        data: {
-                            username: this.form.username,
-                            password: this.form.password
-                        }
-                    })
-                        .catch((err) => {
-                            // eslint-disable-next-line no-console
-                            console.log(err);
-                        });
+                    this.$router.push({
+                        path: "/user/"
+                    });
                 })
                 .catch((err) => {
                     if (err.response.data.username) {
@@ -242,18 +174,6 @@ export default {
                 });
         },
         onInput (evt) {
-            $("#confirm-password")[0].setCustomValidity(
-                $("#confirm-password")[0].value !== $("#password")[0].value ? "Passwords do not match" : ""
-            );
-
-            $("#password")[0].setCustomValidity(
-                $("#password")[0].value.length < 6 ? "Password must be at least 6 characters long" : ""
-            );
-
-            $("#username")[0].setCustomValidity(
-                $("#username")[0].value.match(/^[a-zA-Z0-9]+$/) ? "" : "Username must only have alphabetical and numerical characters"
-            );
-
             $("#zip-code")[0].setCustomValidity(
                 $("#zip-code")[0].value.length <= 4 ? "" : "Zip code max length is 4"
             );

@@ -7,11 +7,8 @@
                 <b-row
                     align-v="center"
                 >
-                    <b-col sm="12" lg="8">
+                    <b-col>
                         <page-header :page-title="pageTitle" />
-                    </b-col>
-                    <b-col sm="12" lg="4">
-                        <slot name="header-extra" />
                     </b-col>
                 </b-row>
             </b-card-title>

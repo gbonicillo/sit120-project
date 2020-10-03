@@ -24,8 +24,17 @@ class UserList(generics.ListAPIView):
 
 
 class ShopList(generics.ListAPIView):
-    queryset = Shop.objects.all()
+    queryset = Shop.objects.all().order_by("name")
     serializer_class = ShopListSerializer
+    filter_backends = [
+        filters.SearchFilter
+    ]
+    search_fields = [
+        "name",
+        "menu_items__name",
+        "address__city",
+        "address__province"
+    ]
 
 
 class ShopDetails(generics.RetrieveAPIView):
@@ -45,10 +54,34 @@ class ShopCreate(generics.CreateAPIView):
     serializer_class = ShopCreateUpdateSerializer
 
 
-class ShopUpdate(generics.UpdateAPIView):
+class ShopUpdate(generics.RetrieveUpdateAPIView):
     permission_classes = [IsAuthenticated, IsOwner, IsShopOwnerOrReadOnly]
     queryset = Shop.objects.all()
     serializer_class = ShopCreateUpdateSerializer
+
+
+class ShopProfilePicture(generics.RetrieveUpdateAPIView):
+    permission_classes = [IsAuthenticated, IsOwner, IsShopOwnerOrReadOnly]
+    queryset = Shop.objects.all()
+    serializer_class = ShopProfilePictureSerializer
+
+
+class ShopOrderList(generics.ListAPIView):
+    permission_classes = [IsAuthenticated, IsOwner, IsShopOwnerOrReadOnly]
+    serializer_class = ShopOrderListOrderSerializer
+    lookup_url_kwarg = "shop_id"
+    filter_backends = [
+        filters.SearchFilter
+    ]
+    search_fields = [
+        "=status"
+    ]
+
+    def get_queryset(self):
+        shop_id = self.kwargs.get(self.lookup_url_kwarg)
+        orders = Order.objects.filter(shop=shop_id).order_by("-created_at")
+
+        return orders
 
 
 class MenuItemCreate(generics.CreateAPIView):
@@ -63,10 +96,16 @@ class MenuItemDestroy(generics.DestroyAPIView):
     serializer_class = MenuItemCreateSerializer
 
 
-class MenuItemUpdate(generics.UpdateAPIView):
+class MenuItemUpdate(generics.RetrieveUpdateAPIView):
     permission_classes = [IsAuthenticated, IsOwner, IsShopOwnerOrReadOnly]
     queryset = MenuItem.objects.all()
     serializer_class = MenuItemUpdateSerializer
+
+
+class MenuItemPicture(generics.RetrieveUpdateAPIView):
+    permission_classes = [IsAuthenticated, IsOwner, IsShopOwnerOrReadOnly]
+    queryset = MenuItem.objects.all()
+    serializer_class = MenuItemPictureSerializer
 
 
 class OrderDetails(generics.RetrieveAPIView):
@@ -102,10 +141,31 @@ class UserMyShop(APIView):
     permission_classes = [IsAuthenticated, IsOwner]
 
     def get(self, request, format=None):
-        shop = Shop.objects.get(owner=request.user)
-        serializer = UserMyShopSerializer(shop)
+        try:
+            shop = Shop.objects.get(owner=request.user)
+            serializer = UserMyShopSerializer(shop)
+            return Response(serializer.data)
 
-        return Response(serializer.data)
+        except Shop.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+
+class UserOrderList(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = UserOrderListOrderSerializer
+    lookup_url_kwarg = "user_id"
+    filter_backends = [
+        filters.SearchFilter
+    ]
+    search_fields = [
+        "=status"
+    ]
+
+    def get_queryset(self):
+        user_id = self.kwargs.get(self.lookup_url_kwarg)
+        orders = Order.objects.filter(user=user_id).order_by("-created_at")
+
+        return orders
 
 
 class AuthUserDetails(APIView):
@@ -126,7 +186,7 @@ class AuthUserRegister(generics.CreateAPIView):
     permission_classes = [AllowAny]
 
 
-class AuthUserUpdate(generics.UpdateAPIView):
+class AuthUserUpdate(generics.RetrieveUpdateAPIView):
     queryset = User.objects.all()
     serializer_class = UserUpdateSerializer
     permission_classes = [IsAuthenticated, IsProfileOwnerOrReadOnly]

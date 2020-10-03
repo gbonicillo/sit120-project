@@ -37,8 +37,7 @@ export default {
             src: "https://code.jquery.com/jquery-3.5.1.min.js"
         }]
     },
-    /*
-   ** Global CSS
+    /* ** Global CSS
    */
     css: [],
     /*
@@ -135,6 +134,9 @@ export default {
             }
         }
         ]
+    },
+    server: {
+        host: "0.0.0.0"
     },
     env: {
         paginationItemsPerPage: 10

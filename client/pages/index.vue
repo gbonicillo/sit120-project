@@ -4,13 +4,12 @@
             <b-jumbotron
                 class="w-100"
                 :header="`Welcome ${userTypeText}`"
-                lead="The site for checking reported issues and recalls for cars!"
-                bg-variant="dark"
+                lead="The site for ordering from your favorite karenderyas online!"
+                bg-variant="primary"
                 text-variant="light"
             >
                 <p>
-                    Try searching report for your car by typing your car's make
-                    and/or model in the search bar
+                    This site is still under construction
                 </p>
             </b-jumbotron>
         </b-row>

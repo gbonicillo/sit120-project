@@ -22,11 +22,12 @@ class IsShopOwnerOrReadOnly(permissions.BasePermission):
             return True
 
         if hasattr(obj, "owner"):
-            allowed = obj.owner == request.user.id
+            allowed = obj.owner.id == request.user.id
 
         elif hasattr(obj, "shop"):
-            shop = Shop.objects.get(pk=obj.shop)
-            allowed = shop.owner == request.user.id
+            print("here @ shop")
+            shop = Shop.objects.get(pk=obj.shop.id)
+            allowed = shop.owner.id == request.user.id
 
         return allowed
 # Check if user is of type owner

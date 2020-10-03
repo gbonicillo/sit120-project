@@ -24,6 +24,19 @@
                 pattern="9[0-9]{9}"
             />
         </b-input-group>
+        <b-input-group
+            v-if="formType === 'price'"
+            prepend="₱"
+        >
+            <b-form-input
+                :id="id"
+                v-model="dataModel"
+                type="number"
+                :required="required ? true : false"
+                :placeholder="placeholder"
+                step="0.01"
+            />
+        </b-input-group>
         <b-form-select
             v-if="formType === 'select'"
             :id="id"

@@ -19,10 +19,26 @@ class ShopListSerializer (serializers.ModelSerializer):
     class Meta:
         model = Shop
         fields = [
+            "id",
             "name",
             "owner",
+            "contact_number",
             "profile_picture",
             "address"
+        ]
+
+
+class ShopDetailsMenuItemListSerializer (serializers.ModelSerializer):
+    picture = serializers.ImageField()
+
+    class Meta:
+        model = MenuItem
+        fields = [
+            "id",
+            "name",
+            "price",
+            "description",
+            "picture"
         ]
 
 
@@ -30,15 +46,18 @@ class ShopDetailsSerializer (serializers.ModelSerializer):
     profile_picture = serializers.ImageField()
     owner = serializers.StringRelatedField()
     address = serializers.StringRelatedField()
-    menu_items = serializers.SerializerMethodField("paginated_menu_items")
+    # menu_items = serializers.SerializerMethodField("paginated_menu_items")
+    menu_items = ShopDetailsMenuItemListSerializer(many=True)
 
     class Meta:
         model = Shop
         fields = [
+            "id",
             "name",
             "owner",
             "profile_picture",
             "address",
+            "contact_number",
             "menu_items"
         ]
 
@@ -58,19 +77,6 @@ class ShopDetailsSerializer (serializers.ModelSerializer):
         }
 
         return data
-
-
-class ShopDetailsMenuItemListSerializer (serializers.ModelSerializer):
-    picture = serializers.ImageField()
-
-    class Meta:
-        model = MenuItem
-        fields = [
-            "name",
-            "price",
-            "description",
-            "picture"
-        ]
 
 
 class ShopAddressCreateUpdateSerializer(serializers.ModelSerializer):
@@ -95,6 +101,7 @@ class ShopCreateUpdateSerializer (serializers.ModelSerializer):
     class Meta:
         model = Shop
         fields = [
+            "id",
             "name",
             "owner",
             "profile_picture",
@@ -134,6 +141,24 @@ class ShopCreateUpdateSerializer (serializers.ModelSerializer):
         instance.address.zip_code = updated_address.get(
             "zip_code", instance.address.zip_code)
         instance.save()
+        instance.address.save()
+
+        return instance
+
+
+class ShopProfilePictureSerializer (serializers.ModelSerializer):
+    profile_picture = serializers.ImageField()
+
+    class Meta:
+        model = Shop
+        fields = [
+            "profile_picture"
+        ]
+
+    def update(self, instance, validated_data):
+        instance.profile_picture = validated_data.get(
+            "profile_picture", instance.profile_picture)
+        instance.save()
 
         return instance
 
@@ -161,6 +186,7 @@ class MenuItemCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = MenuItem
         fields = [
+            "id",
             "name",
             "price",
             "description",
@@ -193,6 +219,23 @@ class MenuItemUpdateSerializer(serializers.ModelSerializer):
         return instance
 
 
+class MenuItemPictureSerializer (serializers.ModelSerializer):
+    picture = serializers.ImageField()
+
+    class Meta:
+        model = MenuItem
+        fields = [
+            "picture"
+        ]
+
+    def update(self, instance, validated_data):
+        instance.picture = validated_data.get(
+            "picture", instance.picture)
+        instance.save()
+
+        return instance
+
+
 class OrderDetailsSerializer(serializers.ModelSerializer):
     user = serializers.StringRelatedField()
     shop = serializers.StringRelatedField()
@@ -212,7 +255,7 @@ class OrderDetailsSerializer(serializers.ModelSerializer):
         ]
 
     def get_menu_items(self, obj):
-        items = OrderMenuItems.objects.filter(order=obj.id)
+        items = OrderMenuItem.objects.filter(order=obj.id)
         menu_items = []
 
         for item in items:
@@ -225,8 +268,7 @@ class OrderDetailsSerializer(serializers.ModelSerializer):
 
 
 class OrderCreateMenuItemSerializer(serializers.ModelSerializer):
-    order = serializers.PrimaryKeyRelatedField(queryset=Order.objects.all())
-    menu_items = serializers.PrimaryKeyRelatedField(
+    menu_item = serializers.PrimaryKeyRelatedField(
         queryset=MenuItem.objects.all())
 
     class Meta:
@@ -240,7 +282,7 @@ class OrderCreateMenuItemSerializer(serializers.ModelSerializer):
 class OrderCreateSerializer(serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
     shop = serializers.PrimaryKeyRelatedField(queryset=Shop.objects.all())
-    menu_items = OrderCreateMenuItemSerializer(many=True)
+    items = OrderCreateMenuItemSerializer(many=True)
 
     class Meta:
         model = Order
@@ -249,20 +291,20 @@ class OrderCreateSerializer(serializers.ModelSerializer):
             "user",
             "shop",
             "remark",
-            "menu_items"
+            "items"
         ]
 
     def create(self, validated_data):
-        menu_items = validated_data.pop("menu_items")
+        menu_items = validated_data.pop("items")
         order = Order(**validated_data)
         order.save()
 
         for item in menu_items:
-            menu_item = MenuItem.objects.get(pk=item.menu_item)
+            # menu_item = MenuItem.objects.get(pk=item.menu_item)
             order_item = OrderMenuItem(
-                menu_item=menu_item,
+                menu_item=item.get("menu_item"),
                 order=order,
-                quantity=item.quantity
+                quantity=item.get("quantity")
             )
 
             order_item.save()
@@ -412,6 +454,7 @@ class UserUpdateSerializer (serializers.ModelSerializer):
         instance.address.zip_code = updated_address.get(
             "zip_code", instance.address.zip_code)
         instance.save()
+        instance.address.save()
 
         return instance
 
@@ -455,3 +498,86 @@ class UserMyShopSerializer (serializers.ModelSerializer):
         fields = [
             "id"
         ]
+
+
+class ShopOrderListOrderSerializer(serializers.ModelSerializer):
+    # user = serializers.StringRelatedField()
+    user = serializers.SerializerMethodField()
+    shop = serializers.StringRelatedField()
+    created_at = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S")
+    menu_items = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Order
+        fields = [
+            "id",
+            "user",
+            "shop",
+            "remark",
+            "created_at",
+            "status",
+            "menu_items"
+        ]
+
+    def get_menu_items(self, obj):
+        items = OrderMenuItem.objects.filter(order=obj.id)
+        menu_items = []
+
+        for item in items:
+            menu_items.append({
+                "name": item.menu_item.name,
+                "price": item.menu_item.price,
+                "quantity": item.quantity
+            })
+
+        return menu_items
+
+    def get_user(self, obj):
+        user = User.objects.get(pk=obj.user.id)
+        request = self.context["request"]
+        return {
+            "id": user.id,
+            "name": str(user),
+            "address": str(user.address),
+            "profile_picture": request.build_absolute_uri(user.profile_picture.url)
+        }
+
+
+class UserOrderListOrderSerializer(serializers.ModelSerializer):
+    shop = serializers.SerializerMethodField()
+    created_at = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S")
+    menu_items = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Order
+        fields = [
+            "id",
+            "shop",
+            "remark",
+            "created_at",
+            "status",
+            "menu_items"
+        ]
+
+    def get_menu_items(self, obj):
+        items = OrderMenuItem.objects.filter(order=obj.id)
+        menu_items = []
+
+        for item in items:
+            menu_items.append({
+                "name": item.menu_item.name,
+                "price": item.menu_item.price,
+                "quantity": item.quantity
+            })
+
+        return menu_items
+
+    def get_shop(self, obj):
+        shop = Shop.objects.get(pk=obj.shop.id)
+        request = self.context["request"]
+        return {
+            "id": shop.id,
+            "name": shop.name,
+            "address": str(shop.address),
+            "profile_picture": request.build_absolute_uri(shop.profile_picture.url)
+        }

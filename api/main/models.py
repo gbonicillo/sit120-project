@@ -115,11 +115,13 @@ class MenuItem(models.Model):
 class Order(models.Model):
     PENDING = "PD"
     ACCEPTED = "AC"
+    REJECTED = "RJ"
     CANCELED = "CN"
 
     ORDER_STATUS_CHOICES = [
         (PENDING, "pending"),
         (ACCEPTED, "accepted"),
+        (REJECTED, "rejected"),
         (CANCELED, "canceled")
     ]
 
@@ -151,5 +153,6 @@ class Order(models.Model):
 
 class OrderMenuItem(models.Model):
     menu_item = models.ForeignKey(MenuItem, on_delete=models.CASCADE)
-    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    order = models.ForeignKey(
+        Order, on_delete=models.CASCADE, related_name="items")
     quantity = models.IntegerField()

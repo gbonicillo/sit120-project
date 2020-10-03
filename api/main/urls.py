@@ -17,7 +17,8 @@ user_url_patterns = [
     path("users/<int:pk>/change-password",
          views.AuthUserUpdatePassword.as_view()),
     path("users/<int:pk>/profile-picture", views.UserProfilePicture.as_view()),
-    path("user/my-shop", views.UserMyShop.as_view())
+    path("user/my-shop", views.UserMyShop.as_view()),
+    path("users/<int:user_id>/orders", views.UserOrderList.as_view())
 ]
 
 shop_url_patterns = [
@@ -25,13 +26,16 @@ shop_url_patterns = [
     path("shops/create", views.ShopCreate.as_view()),
     path("shops/<int:pk>", views.ShopDetails.as_view()),
     path("shops/<int:pk>/update", views.ShopUpdate.as_view()),
-    path("shops/<int:pk>/destroy", views.ShopDestroy.as_view())
+    path("shops/<int:pk>/destroy", views.ShopDestroy.as_view()),
+    path("shops/<int:pk>/profile-picture", views.ShopProfilePicture.as_view()),
+    path("shops/<int:shop_id>/orders", views.ShopOrderList.as_view())
 ]
 
 menu_item_url_patterns = [
     path("menu-items/create", views.MenuItemCreate.as_view()),
     path("menu-items/<int:pk>/destroy", views.MenuItemDestroy.as_view()),
-    path("menu-items/<int:pk>/update", views.MenuItemUpdate.as_view())
+    path("menu-items/<int:pk>/update", views.MenuItemUpdate.as_view()),
+    path("menu-items/<int:pk>/picture", views.MenuItemPicture.as_view())
 ]
 
 order_item_url_patterns = [

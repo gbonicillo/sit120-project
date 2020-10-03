@@ -1,5 +1,5 @@
 <template>
-    <h1 class="display-4">
+    <h1 class="display-4 page-title text-center" style="width:100%">
         {{ pageTitle }}
     </h1>
 </template>
@@ -14,3 +14,7 @@ export default {
     }
 };
 </script>
+
+<style lang="scss" scoped>
+
+</style>

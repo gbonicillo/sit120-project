@@ -90,7 +90,6 @@ export default {
             }
         },
         onProfilePictureClick () {
-            console.log("here");
             $("#profile-picture").click();
         }
     }

@@ -2,28 +2,25 @@
     <div>
         <b-row>
             <b-col class="d-flex justify-content-center mb-2">
-                <user-profile-picture
-                    :src="user.profile_picture"
-                    size="168"
+                <karenderya-profile-picture
+                    :src="karenderya.profile_picture"
+                    :size="avatarSize"
                 />
             </b-col>
         </b-row>
         <b-row class="d-flex justify-content-center">
-            <h1> {{ user.first_name + " " + user.last_name }} </h1>
+            <h1 class="text-center">
+                {{ karenderya.name }}
+            </h1>
         </b-row>
         <b-row class="d-flex justify-content-center">
             <p class="info-text">
-                <b-icon icon="envelope" /> {{ user.email }}
+                <b-icon icon="telephone" /> +63{{ karenderya.contact_number }}
             </p>
         </b-row>
         <b-row class="d-flex justify-content-center">
             <p class="info-text">
-                <b-icon icon="telephone" /> +63{{ user.contact_number }}
-            </p>
-        </b-row>
-        <b-row class="d-flex justify-content-center">
-            <p class="info-text">
-                <b-icon icon="house" /> {{ user.address }}
+                <b-icon icon="house" /> {{ karenderya.address }}
             </p>
         </b-row>
     </div>
@@ -33,18 +30,20 @@
 
 export default {
     props: {
-        user: {
+        karenderya: {
             type: Object,
             default () {
                 return {
-                    first_name: "",
-                    last_name: "",
+                    name: "",
                     profile_picture: "",
-                    email: "",
                     contact_number: "",
                     address: ""
                 };
             }
+        },
+        avatarSize: {
+            type: String,
+            default: "168"
         }
     }
 };
