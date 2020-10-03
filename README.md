@@ -58,21 +58,39 @@ You don't have to do anything
 
 You can use the [official GUI](https://dev.mysql.com/downloads/workbench/) for these or Google how to do these
 
-1) Create a database named `checkMyCar`
-2) Create a user in mysql and add all permissions for `checkMyCar`
-3) In `api/settings.py` find this entry and put your user's username and password
+1) Create a database named `onlineKarenderya`
+2) Create a user in mysql and add all permissions for `onlineKarenderya`
+3) In `api/api/settings.py` find this entry and put your user's username and password
 
 ```Python
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'checkMyCar',
+        'NAME': 'onlineKarenderya',
         'USER': '<your username here>',
         'PASSWORD': '<your password here>',
         'HOST': 'localhost',
         'PORT': '3306'
     }
 }
+```
+
+## Creating the super user
+
+```bash
+# FROM PROJECT DIRECTORY
+$ cd api/
+
+# Create database migrations
+$ python3 manage.py makemigrations
+
+# Apply migrations
+$ python3 manage.py migrate
+
+
+# Create a superuser (administrator user)
+$ python3 manage.py createsuperuser
+
 ```
 
 # Running the Project
@@ -106,5 +124,6 @@ $ npm run dev
 # Important URLS
 
 * `localhost:8000/admin` - The Admin page, you can login with superuser here
+* `localhost:8000/api` - The API
 
 * `localhost:3000` - Homepage of client
