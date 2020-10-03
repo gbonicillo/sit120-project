@@ -135,7 +135,7 @@ class Order(models.Model):
         related_name="orders",
         on_delete=models.CASCADE
     )
-    remark = models.TextField(default="No remarks")
+    remark = models.TextField(default="No remarks", blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     status = models.CharField(
         max_length=2,

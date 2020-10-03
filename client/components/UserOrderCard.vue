@@ -100,7 +100,7 @@
                         variant="danger"
                         style="height:100%"
                         block
-                        @click="updateStatus('CN', order.id)"
+                        @click="onClickReject(order.id)"
                     >
                         Cancel
                     </b-button>
@@ -189,6 +189,25 @@ export default {
                     });
                 }
             });
+        },
+        onClickReject (id) {
+            this.$bvModal.msgBoxConfirm(`Cancel this order?`, {
+                title: `Confirmation`,
+                size: "sm",
+                buttonSize: "sm",
+                okVariant: "danger",
+                headerBgVariant: "danger",
+                headerTextVariant: "light",
+                okTitle: "Yes",
+                cancelTitle: "No",
+                hideHeaderClose: false,
+                centered: true
+            })
+                .then((confirmation) => {
+                    if (confirmation) {
+                        this.updateStatus("CN", id);
+                    }
+                });
         }
     }
 };

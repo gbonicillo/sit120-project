@@ -13,7 +13,9 @@
             title="Order Summary"
             header-bg-variant="primary"
             header-text-variant="light"
-            @hide="onHide"
+            ok-title="Place Order"
+            ok-variant="success"
+            @ok="onOk"
         >
             <b-table-simple
                 hover
@@ -34,6 +36,13 @@
                     </b-tr>
                 </b-thead>
                 <b-tbody>
+                    <b-tr
+                        v-if="orderItems.length === 0"
+                    >
+                        <b-td colspan="3" class="text-center">
+                            <em class="text-muted">No items yet</em>
+                        </b-td>
+                    </b-tr>
                     <b-tr
                         v-for="item in orderItems"
                         :key="item.id"
@@ -68,7 +77,7 @@
             title="Remark"
             header-bg-variant="primary"
             header-text-variant="light"
-            @hide="onHideRemark"
+            @ok="onHideRemark"
         >
             <form-group
                 id="remark"
@@ -121,26 +130,55 @@ export default {
             this.$bvModal.show("order-summary-modal");
         },
         onClickRow (item) {
-            const confirmation = confirm(`Are you sure you want to remove ${item.name}?`);
-            if (confirmation) {
-                const index = this.orderItems.indexOf(item);
-                if (index > -1) {
-                    this.orderItems.splice(index, 1);
-                }
-            }
-        },
-        onHide (bvEvt) {
-            if (bvEvt.trigger === "ok") {
-                if (this.orderItems.length > 0) {
-                    const confirmation = confirm(`Place order?`);
+            this.$bvModal.msgBoxConfirm(`Are you sure you want to remove ${item.name}?`, {
+                title: `Confirmation`,
+                size: "sm",
+                buttonSize: "sm",
+                okVariant: "danger",
+                headerBgVariant: "danger",
+                headerTextVariant: "light",
+                okTitle: "Yes",
+                cancelTitle: "No",
+                hideHeaderClose: false,
+                centered: true
+            })
+                .then((confirmation) => {
                     if (confirmation) {
-                        this.$bvModal.show("order-remark-modal");
+                        const index = this.orderItems.indexOf(item);
+                        if (index > -1) {
+                            this.orderItems.splice(index, 1);
+                        }
                     }
-                } else {
-                    this.$toasted.global.defaultError({
-                        msg: "Your order is empty"
+                });
+        },
+        onOk () {
+            if (this.orderItems.length > 0) {
+                this.$bvModal.msgBoxConfirm(`Place this order?`, {
+                    title: `Confirmation`,
+                    size: "sm",
+                    buttonSize: "sm",
+                    okVariant: "success",
+                    headerBgVariant: "primary",
+                    headerTextVariant: "light",
+                    okTitle: "Yes",
+                    cancelTitle: "No",
+                    hideHeaderClose: false,
+                    centered: true
+                })
+                    .then((confirmation) => {
+                        if (confirmation) {
+                            this.$bvModal.show("order-remark-modal");
+                        }
                     });
-                }
+            } else {
+                this.$bvModal.msgBoxOk("Your order is empty", {
+                    title: "Empty Order",
+                    size: "sm",
+                    buttonSize: "sm",
+                    headerBgVariant: "warning",
+                    headerTextVariant: "light",
+                    centered: true
+                });
             }
         },
         onHideRemark (bvEvt) {
@@ -152,6 +190,8 @@ export default {
                         msg: "Your order is empty"
                     });
                 }
+            } else {
+                this.remark = "";
             }
         },
         async createOrder () {

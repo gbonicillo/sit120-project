@@ -5,7 +5,10 @@
         :title="`Add how many ${item.name}`"
         header-bg-variant="primary"
         header-text-variant="light"
-        @hide="onHide"
+        @ok="onOk"
+        @show="resetModal"
+        @hidden="resetModal"
+        @cancel="resetModal"
     >
         <b-row class="mb-2">
             <b-col>
@@ -38,8 +41,8 @@ export default {
         };
     },
     methods: {
-        onHide (bvEvt) {
-            if (bvEvt.trigger === "ok" && this.quantity > 0) {
+        onOk () {
+            if (this.quantity > 0) {
                 const itemToAdd = {
                     id: this.item.id,
                     name: this.item.name,
@@ -48,6 +51,9 @@ export default {
                 };
                 this.$emit("add-item", itemToAdd);
             }
+        },
+        resetModal () {
+            this.quantity = 0;
         }
     }
 };

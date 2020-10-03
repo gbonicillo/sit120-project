@@ -77,7 +77,7 @@ export default {
             }
         },
         updatePage () {
-            this.fetchPage(`/api/shops/${this.karenderyaId}/orders`);
+            this.fetchPage(`/api/users/${this.$auth.user.id}/orders`);
         }
     }
 };

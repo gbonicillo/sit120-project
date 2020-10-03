@@ -37,13 +37,25 @@
                 <menu-item-card
                     :menu-item="item"
                 >
-                    <b-button
-                        variant="primary"
-                        block
-                        :to="`/my-karenderya/update-menu-item/${item.id}`"
-                    >
-                        Update
-                    </b-button>
+                    <b-row>
+                        <b-col>
+                            <b-button
+                                variant="danger"
+                                block
+                            >
+                                Delete
+                            </b-button>
+                        </b-col>
+                        <b-col>
+                            <b-button
+                                variant="primary"
+                                block
+                                :to="`/my-karenderya/update-menu-item/${item.id}`"
+                            >
+                                Update
+                            </b-button>
+                        </b-col>
+                    </b-row>
                 </menu-item-card>
             </b-col>
         </b-row>
